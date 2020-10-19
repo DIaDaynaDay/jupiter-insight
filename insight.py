@@ -3,19 +3,21 @@ import os
 import cv2 
 from glob import glob
 from astropy.io import fits
+from astropy.visualization import *
 from photutils import centroid_sources, centroid_com, centroid_quadratic
-
+import scipy.misc
 
 #function to get the data from fits files
 def get_data(file):
-    foo = fits.open(file)
+    foo = fits.open(file,ignore_missing_end=True,lazy_load_hdus = False)
     return foo[0].data
 
+#open multiple fits without reading the data
 def open_fits(directory):
     files =[]
     for filename in os.listdir(directory):
         if filename.endswith(".fits"):
-              foo = fits.open(directory + '/' + filename)[0]
+              foo = fits.open(directory + '/' + filename, ignore_missing_end=True)[0]
               files.append(foo)
     return files
 
@@ -78,7 +80,18 @@ def image_registration(data,M,rows,cols):
 def write_to_fits(directory,data,name):
     fitslist = []
     for i in range(len(data)):
-        foo = fits.PrimaryHDU(data[i])
+        foo = fits.PrimaryHDU(data[i],header=None)
         fitslist.append(foo)
     for i in range(len(fitslist)):    
-        fitslist[i].writeto(directory + '/' + name + str(i) + '.fits')   
+        fitslist[i].writeto(directory + '/' + name + str(i) + '.fits')          
+ 
+           
+#code credit https://properimage.readthedocs.io/en/latest/tutorial/Tutorial04.html
+#get a image normalisation to z scale and asinh stretch
+def norm_zscale_asinh(data):
+    norms = []
+    for child in data:
+        norm = ImageNormalize(child, interval=ZScaleInterval(), stretch=AsinhStretch())
+        norms.append(norm)
+    return norms
+        
