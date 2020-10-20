@@ -17,4 +17,5 @@ To successfully measure the mass of Jupiter using the Galilean Moons.
 * Calculated the bias for our camera 
 * Selected the images for Jupiter Moons
 * Substructed the bias from out data
-* Centered the images
+* Centered the images for Jupiter and Saturn
+* Tracked the locations of moons
