@@ -4,7 +4,8 @@ import cv2
 from glob import glob
 from astropy.io import fits
 from astropy.visualization import *
-from photutils import centroid_sources, centroid_com, centroid_quadratic
+from photutils import *
+
 import scipy.misc
 
 #function to get the data from fits files
@@ -94,4 +95,32 @@ def norm_zscale_asinh(data):
         norm = ImageNormalize(child, interval=ZScaleInterval(), stretch=AsinhStretch())
         norms.append(norm)
     return norms
+
+#code credit https://properimage.readthedocs.io/en/latest/tutorial/Tutorial04.html
+#get a image normalisation to z scale and asinh stretch
+def norm_zscale_asinh(data):
+    norms = []
+    for child in data:
+        norm = ImageNormalize(child, interval=ZScaleInterval(), stretch=AsinhStretch())
+        norms.append(norm)
+    return norms
+
+#code credit https://photutils.readthedocs.io/en/stable/detection.html
+#detects all the moons positions, does not differentiate between them
+def find_moons(data,mask,threshold):
+    moon_list = []
+    for child in data:
+        tbl = find_peaks(child, threshold, box_size=11, mask = mask)
+        table = tbl.as_array()
+        moon_list.append(table[0])
+        moon_list.append(table[1])
+        if len(tbl) == 3:
+            moon_list.append(table[2])
+        if len(tbl) == 4:
+            moon_list.append(table[2])
+            moon_list.append(table[3])
+    moons = np.array(moon_list)
+
+    
+    return moons  
         
