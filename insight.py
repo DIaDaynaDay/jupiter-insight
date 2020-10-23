@@ -126,4 +126,26 @@ def find_moons(data,mask,threshold):
 
     
     return moons  
+
+def find_moons_2(data,mask,threshold):
+    moon_list = []
+    for child in data:
+        segm = detect_souces(child, threshold, mask = mask)
+        props = source_properties(data, segm)
+        tbl = properties_table(props)
+        table = tbl.as_array()
+        moon_list.append(table[0])
+        if len(tbl) == 2:
+            moon_list.append(table[1])
+        if len(tbl) == 3:
+            moon_list.append(table[1])
+            moon_list.append(table[2])
+        if len(tbl) == 4:
+            moon_list.append(table[1])
+            moon_list.append(table[2])
+            moon_list.append(table[3])
+    moons = np.array(moon_list)
+
+    
+    return moons  
         
